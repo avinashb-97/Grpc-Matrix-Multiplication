@@ -25,6 +25,7 @@ public class GRPCClientService {
 		channel.shutdown();        
 		return helloResponse.getPong();
     }
+
     public String add(){
 		ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost",9090)
 		.usePlaintext()
