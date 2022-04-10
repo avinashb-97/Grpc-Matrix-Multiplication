@@ -3,19 +3,43 @@ package com.example.grpc.server.grpcserver;
 
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 @GrpcService
 public class MatrixServiceImpl extends MatrixServiceGrpc.MatrixServiceImplBase
 {
+	private String name;
+
+	public MatrixServiceImpl(){
+
+	}
+
+	public MatrixServiceImpl(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public void addBlock(MatrixRequest request, StreamObserver<MatrixReply> reply)
 	{
-		System.out.println("Request received from client:\n" + request);
-		int C00=request.getA00()+request.getB00();
-		int C01=request.getA01()+request.getB01();
-		int C10=request.getA10()+request.getB10();
-		int C11=request.getA11()+request.getB11();
+		int[][] matA = MatrixUtils.decodeMatrix(request.getA());
+		int[][] matB = MatrixUtils.decodeMatrix(request.getB());
+		int row = matA.length;
+		int col = matA[0].length;
 
-		MatrixReply response = MatrixReply.newBuilder().setC00(C00).setC01(C01).setC10(C10).setC11(C11).build();
+		System.out.println("Matrix addition request received from client:\n" + request+" , Server: "+name);
+		int[][] matC = new int[row][col];
+
+		for(int i=0; i<row; i++)
+		{
+			for(int j=0; j<col; j++)
+			{
+				matC[i][j] = matA[i][j] + matB[i][j];
+			}
+		}
+
+		String res = MatrixUtils.encodeMatrix(matC);
+		MatrixReply response = MatrixReply.newBuilder().setC(res).build();
 		reply.onNext(response);
 		reply.onCompleted();
 	}
@@ -23,12 +47,28 @@ public class MatrixServiceImpl extends MatrixServiceGrpc.MatrixServiceImplBase
 	@Override
 	public void multiplyBlock(MatrixRequest request, StreamObserver<MatrixReply> reply)
 	{
-		System.out.println("Request received from client:\n" + request);
-		int C00=request.getA00()*request.getB00()+request.getA01()*request.getB10();
-		int C01=request.getA00()*request.getB01()+request.getA01()*request.getB11();
-		int C10=request.getA10()*request.getB00()+request.getA11()*request.getB10();
-		int C11=request.getA10()*request.getB01()+request.getA11()*request.getB11();
-        MatrixReply response = MatrixReply.newBuilder().setC00(C00).setC01(C01).setC10(C10).setC11(C11).build();
+		int[][] matA = MatrixUtils.decodeMatrix(request.getA());
+		int[][] matB = MatrixUtils.decodeMatrix(request.getB());
+		int row = matA.length;
+		int col = matA[0].length;
+
+		System.out.println("Matrix multiplication request received from client:\n" + request+" , Server: "+name);
+		int[][] matC = new int[row][col];
+
+		for(int i=0; i<row; i++)
+		{
+			for(int j=0; j<col; j++)
+			{
+				matC[i][j] = 0;
+				for(int k=0; k<row; k++)
+				{
+					matC[i][j] += matA[i][k] * matB[k][j];
+				}
+			}
+		}
+
+		String res = MatrixUtils.encodeMatrix(matC);
+        MatrixReply response = MatrixReply.newBuilder().setC(res).build();
         reply.onNext(response);
         reply.onCompleted();
     }
