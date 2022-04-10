@@ -1,10 +1,12 @@
-package com.example.grpc.server.grpcserver;
+package com.example.grpc.server.grpcserver.service;
 
 
+import com.example.grpc.server.grpcserver.MatrixReply;
+import com.example.grpc.server.grpcserver.MatrixRequest;
+import com.example.grpc.server.grpcserver.MatrixServiceGrpc;
+import com.example.grpc.server.grpcserver.utils.MatrixUtils;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @GrpcService
 public class MatrixServiceImpl extends MatrixServiceGrpc.MatrixServiceImplBase

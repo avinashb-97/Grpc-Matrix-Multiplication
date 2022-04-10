@@ -1,8 +1,8 @@
-package com.example.grpc.server.grpcserver;
+package com.example.grpc.server.grpcserver.utils;
 
 import java.util.Arrays;
 
-class MatrixUtils {
+public class MatrixUtils {
 
     public static String encodeMatrix(int[][] matrix) {
         return Arrays.deepToString(matrix);

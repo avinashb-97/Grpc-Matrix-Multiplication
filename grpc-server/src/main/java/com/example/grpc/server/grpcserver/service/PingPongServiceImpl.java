@@ -1,5 +1,8 @@
-package com.example.grpc.server.grpcserver;
+package com.example.grpc.server.grpcserver.service;
 
+import com.example.grpc.server.grpcserver.PingPongServiceGrpc;
+import com.example.grpc.server.grpcserver.PingRequest;
+import com.example.grpc.server.grpcserver.PongResponse;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 
@@ -7,7 +10,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 public class PingPongServiceImpl extends PingPongServiceGrpc.PingPongServiceImplBase {
     @Override
     public void ping(
-        PingRequest request, StreamObserver<PongResponse> responseObserver) {        
+			PingRequest request, StreamObserver<PongResponse> responseObserver) {
 		String ping = new StringBuilder()
                 .append("pong")
                 .toString();        
