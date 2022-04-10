@@ -1,9 +1,9 @@
-package com.example.grpc.client.grpcclient;
+package com.example.grpc.client.grpcclient.utils;
 
 import java.util.Arrays;
 import java.util.List;
 
-class MatrixUtils {
+public class MatrixUtils {
 
     /**
      * Checks whether given number is in power of 2

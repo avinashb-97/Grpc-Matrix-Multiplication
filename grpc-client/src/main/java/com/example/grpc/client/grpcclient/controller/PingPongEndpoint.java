@@ -1,21 +1,14 @@
-package com.example.grpc.client.grpcclient;
+package com.example.grpc.client.grpcclient.controller;
 
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import com.example.grpc.client.grpcclient.service.GRPCClientService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
 
 @RestController
 public class PingPongEndpoint {    
 
-	GRPCClientService grpcClientService;    
+	GRPCClientService grpcClientService;
 	@Autowired
     	public PingPongEndpoint(GRPCClientService grpcClientService) {
         	this.grpcClientService = grpcClientService;

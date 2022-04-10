@@ -1,7 +1,8 @@
-package com.example.grpc.client.grpcclient;
+package com.example.grpc.client.grpcclient.controller;
 
+import com.example.grpc.client.grpcclient.service.GRPCClientService;
+import com.example.grpc.client.grpcclient.utils.MatrixUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

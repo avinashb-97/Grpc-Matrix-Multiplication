@@ -1,5 +1,7 @@
-package com.example.grpc.client.grpcclient;
+package com.example.grpc.client.grpcclient.service;
 
+import com.example.grpc.client.grpcclient.utils.MatrixUtils;
+import com.example.grpc.client.grpcclient.utils.MultiAddressNameResolverFactory;
 import com.example.grpc.server.grpcserver.PingRequest;
 import com.example.grpc.server.grpcserver.PongResponse;
 import com.example.grpc.server.grpcserver.PingPongServiceGrpc;
@@ -9,12 +11,9 @@ import com.example.grpc.server.grpcserver.MatrixServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.NameResolver;
-import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 
 @Service
 public class GRPCClientService {

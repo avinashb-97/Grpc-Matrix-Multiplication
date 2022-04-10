@@ -1,4 +1,4 @@
-package com.example.grpc.client.grpcclient;
+package com.example.grpc.client.grpcclient.utils;
 
 import io.grpc.Attributes;
 import io.grpc.EquivalentAddressGroup;
@@ -10,11 +10,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class MultiAddressNameResolverFactory extends NameResolver.Factory {
+public class MultiAddressNameResolverFactory extends NameResolver.Factory {
 
     final List<EquivalentAddressGroup> addresses;
 
-    MultiAddressNameResolverFactory(SocketAddress... addresses) {
+    public MultiAddressNameResolverFactory(SocketAddress... addresses) {
         this.addresses = Arrays.stream(addresses)
                 .map(EquivalentAddressGroup::new)
                 .collect(Collectors.toList());
