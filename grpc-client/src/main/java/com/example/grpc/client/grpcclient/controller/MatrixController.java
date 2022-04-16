@@ -33,7 +33,7 @@ public class MatrixController {
 //    }
 
     @PostMapping("/multiply")
-    public void uploadFile(@RequestParam("file") MultipartFile file)
+    public void uploadFile(@RequestParam("file") MultipartFile file, @RequestParam int deadline)
     {
         if(file == null)
         {
@@ -51,7 +51,8 @@ public class MatrixController {
         int[][] matA = MatrixUtils.getMatrixA(list);
         int[][] matB = MatrixUtils.getMatrixB(list);
 
-        int[][] res = grpcClientService.multiply(matA, matB);
+        System.out.println(deadline);
+        int[][] res = grpcClientService.multiply(matA, matB, deadline);
         MatrixUtils.printMatrix(res);
     }
 

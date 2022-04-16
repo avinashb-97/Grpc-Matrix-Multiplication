@@ -8,17 +8,21 @@ import com.example.grpc.server.grpcserver.PingPongServiceGrpc;
 import com.example.grpc.server.grpcserver.MatrixRequest;
 import com.example.grpc.server.grpcserver.MatrixReply;
 import com.example.grpc.server.grpcserver.MatrixServiceGrpc;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.NameResolver;
+import io.grpc.*;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GRPCClientService {
 
-	static int MAX = 0;
+	int stubNum = 0;
 
     public String ping() {
         	ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
@@ -52,26 +56,33 @@ public class GRPCClientService {
 		MatrixUtils.printMatrix(C);
 	}
 
-	public int[][] multiply(int[][] matA, int[][] matB){
+	public int[][] multiply(int[][] matA, int[][] matB)
+	{
+		return  multiply(matA, matB, 8);
+	}
 
-		NameResolver.Factory nameResolverFactory = new MultiAddressNameResolverFactory(
-				new InetSocketAddress("localhost", 50000),
-				new InetSocketAddress("localhost", 50001),
-				new InetSocketAddress("localhost", 50002),
-				new InetSocketAddress("localhost", 50003),
-				new InetSocketAddress("localhost", 50004),
-				new InetSocketAddress("localhost", 50005),
-				new InetSocketAddress("localhost", 50006),
-				new InetSocketAddress("localhost", 50007)
-		);
+	public int[][] multiply(int[][] matA, int[][] matB, int deadline){
 
-		ManagedChannel channel = ManagedChannelBuilder.forTarget("service")
-				.nameResolverFactory(nameResolverFactory)
-				.defaultLoadBalancingPolicy("round_robin")
-				.usePlaintext()
-				.build();
+		ManagedChannel channel1 = ManagedChannelBuilder.forAddress("localhost",50000).usePlaintext().build();
+		MatrixServiceGrpc.MatrixServiceBlockingStub stub1 = MatrixServiceGrpc.newBlockingStub(channel1);
+		ManagedChannel channel2 = ManagedChannelBuilder.forAddress("localhost",50001).usePlaintext().build();
+		MatrixServiceGrpc.MatrixServiceBlockingStub stub2 = MatrixServiceGrpc.newBlockingStub(channel2);
+		ManagedChannel channel3 = ManagedChannelBuilder.forAddress("localhost",50002).usePlaintext().build();
+		MatrixServiceGrpc.MatrixServiceBlockingStub stub3 = MatrixServiceGrpc.newBlockingStub(channel3);
+		ManagedChannel channel4 = ManagedChannelBuilder.forAddress("localhost",50003).usePlaintext().build();
+		MatrixServiceGrpc.MatrixServiceBlockingStub stub4 = MatrixServiceGrpc.newBlockingStub(channel4);
+		ManagedChannel channel5 = ManagedChannelBuilder.forAddress("localhost",50004).usePlaintext().build();
+		MatrixServiceGrpc.MatrixServiceBlockingStub stub5 = MatrixServiceGrpc.newBlockingStub(channel5);
+		ManagedChannel channel6 = ManagedChannelBuilder.forAddress("localhost",50005).usePlaintext().build();
+		MatrixServiceGrpc.MatrixServiceBlockingStub stub6 = MatrixServiceGrpc.newBlockingStub(channel6);
+		ManagedChannel channel7 = ManagedChannelBuilder.forAddress("localhost",50006).usePlaintext().build();
+		MatrixServiceGrpc.MatrixServiceBlockingStub stub7 = MatrixServiceGrpc.newBlockingStub(channel7);
+		ManagedChannel channel8 = ManagedChannelBuilder.forAddress("localhost",50007).usePlaintext().build();
+		MatrixServiceGrpc.MatrixServiceBlockingStub stub8 = MatrixServiceGrpc.newBlockingStub(channel8);
 
-		MatrixServiceGrpc.MatrixServiceBlockingStub stub = MatrixServiceGrpc.newBlockingStub(channel);
+		List<ManagedChannel> channels = Arrays.asList(channel1, channel2, channel3, channel4, channel5, channel6, channel7, channel8);
+		List<MatrixServiceGrpc.MatrixServiceBlockingStub> stubs = Arrays.asList(stub1, stub2, stub3, stub4, stub5, stub6, stub7, stub8);
+		stubNum = 0;
 
 		int MAX = matA.length;
 		int bSize = MAX/2;
@@ -85,28 +96,46 @@ public class GRPCClientService {
 		long startTime = System.nanoTime();
 
 		int[][] A, B, C, D;
-		String AP1 = stub.multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[0]).setB(bEncodedBlocks[0]).build()).getC();
-		String AP2 = stub.multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[1]).setB(bEncodedBlocks[2]).build()).getC();
-		A = MatrixUtils.decodeMatrix(stub.addBlock(MatrixRequest.newBuilder().setA(AP1).setB(AP2).build()).getC());
+		String AP1 = getStub(stubs, deadline).multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[0]).setB(bEncodedBlocks[0]).build()).getC();
+		String AP2 = getStub(stubs, deadline).multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[1]).setB(bEncodedBlocks[2]).build()).getC();
+		A = MatrixUtils.decodeMatrix(getStub(stubs, deadline).addBlock(MatrixRequest.newBuilder().setA(AP1).setB(AP2).build()).getC());
 
-		String BP1 = stub.multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[0]).setB(bEncodedBlocks[1]).build()).getC();
-		String BP2 = stub.multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[1]).setB(bEncodedBlocks[3]).build()).getC();
-		B = MatrixUtils.decodeMatrix(stub.addBlock(MatrixRequest.newBuilder().setA(BP1).setB(BP2).build()).getC());
+		String BP1 = getStub(stubs, deadline).multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[0]).setB(bEncodedBlocks[1]).build()).getC();
+		String BP2 = getStub(stubs, deadline).multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[1]).setB(bEncodedBlocks[3]).build()).getC();
+		B = MatrixUtils.decodeMatrix(getStub(stubs, deadline).addBlock(MatrixRequest.newBuilder().setA(BP1).setB(BP2).build()).getC());
 
-		String CP1 = stub.multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[2]).setB(bEncodedBlocks[0]).build()).getC();
-		String CP2 = stub.multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[3]).setB(bEncodedBlocks[2]).build()).getC();
-		C = MatrixUtils.decodeMatrix(stub.addBlock(MatrixRequest.newBuilder().setA(BP1).setB(BP2).build()).getC());
+		String CP1 = getStub(stubs, deadline).multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[2]).setB(bEncodedBlocks[0]).build()).getC();
+		String CP2 = getStub(stubs, deadline).multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[3]).setB(bEncodedBlocks[2]).build()).getC();
+		C = MatrixUtils.decodeMatrix(getStub(stubs, deadline).addBlock(MatrixRequest.newBuilder().setA(BP1).setB(BP2).build()).getC());
 
-		String DP1 = stub.multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[2]).setB(bEncodedBlocks[1]).build()).getC();
-		String DP2 = stub.multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[3]).setB(bEncodedBlocks[3]).build()).getC();
-		D = MatrixUtils.decodeMatrix(stub.addBlock(MatrixRequest.newBuilder().setA(BP1).setB(BP2).build()).getC());
+		String DP1 = getStub(stubs, deadline).multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[2]).setB(bEncodedBlocks[1]).build()).getC();
+		String DP2 = getStub(stubs, deadline).multiplyBlock(MatrixRequest.newBuilder().setA(aEncodedBlocks[3]).setB(bEncodedBlocks[3]).build()).getC();
+		D = MatrixUtils.decodeMatrix(getStub(stubs, deadline).addBlock(MatrixRequest.newBuilder().setA(BP1).setB(BP2).build()).getC());
 
 		int[][] res = calResult(A, B, C, D, MAX, bSize);
 
 		long stopTime = System.nanoTime();
 		System.out.println(stopTime - startTime);
+		shutdownChannels(channels);
 
 		return res;
+	}
+
+	private MatrixServiceGrpc.MatrixServiceBlockingStub getStub(List<MatrixServiceGrpc.MatrixServiceBlockingStub> stubs, int deadline)
+	{
+		if(stubNum == deadline)
+		{
+			stubNum = 0;
+		}
+		return stubs.get(stubNum++);
+	}
+
+	private void shutdownChannels(List<ManagedChannel> channels)
+	{
+		for (ManagedChannel channel : channels)
+		{
+			channel.shutdown();
+		}
 	}
 
 	static int[][] multiplyMatrixBlock( int matA[][], int matB[][])

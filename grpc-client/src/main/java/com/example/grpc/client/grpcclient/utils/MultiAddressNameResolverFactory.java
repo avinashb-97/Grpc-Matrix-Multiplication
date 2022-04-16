@@ -4,9 +4,8 @@ import io.grpc.Attributes;
 import io.grpc.EquivalentAddressGroup;
 import io.grpc.NameResolver;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +13,8 @@ public class MultiAddressNameResolverFactory extends NameResolver.Factory {
 
     final List<EquivalentAddressGroup> addresses;
 
-    public MultiAddressNameResolverFactory(SocketAddress... addresses) {
-        this.addresses = Arrays.stream(addresses)
+    public MultiAddressNameResolverFactory(List<InetSocketAddress> addresses) {
+        this.addresses = addresses.stream()
                 .map(EquivalentAddressGroup::new)
                 .collect(Collectors.toList());
     }
@@ -38,5 +37,16 @@ public class MultiAddressNameResolverFactory extends NameResolver.Factory {
     public String getDefaultScheme() {
         return "multiaddress";
     }
+
+//    @Override
+//    protected boolean isAvailable() {
+//        return true;
+//    }
+//
+//    @Override
+//    protected int priority() {
+//        return 0;
+//    }
+
 }
 
