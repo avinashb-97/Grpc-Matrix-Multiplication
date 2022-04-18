@@ -96,7 +96,7 @@ public class GRPCClientService {
 		String[] aEncodedBlocks = MatrixUtils.encodeBlocks(aBlocks);
 		String[] bEncodedBlocks = MatrixUtils.encodeBlocks(bBlocks);
 
-		long startTime = System.nanoTime();
+		long startTime = System.currentTimeMillis();
 		int[][] A, B, C, D;
 
 		final int numServer = getNeededServerNum(aEncodedBlocks[0], bEncodedBlocks[0], stub1, deadline);
@@ -110,12 +110,13 @@ public class GRPCClientService {
 		CompletableFuture<String> DP1 = grpcMutliUtil.multiplyAsync(aEncodedBlocks[2], bEncodedBlocks[1], getStub(stubs, numServer));
 		CompletableFuture<String> DP2 = grpcMutliUtil.multiplyAsync(aEncodedBlocks[3], bEncodedBlocks[3], getStub(stubs, numServer));
 		CompletableFuture.allOf(AP1, AP2, BP1, BP2, CP1, CP2, DP1, DP2);
-
+		System.out.println("Time here : " + (System.currentTimeMillis()- startTime));
 		CompletableFuture<String> AMat = grpcMutliUtil.addAsync(AP1.get(), AP2.get(), getStub(stubs, numServer));
 		CompletableFuture<String> BMat = grpcMutliUtil.addAsync(BP1.get(), BP2.get(), getStub(stubs, numServer));
 		CompletableFuture<String> CMat = grpcMutliUtil.addAsync(CP1.get(), CP2.get(), getStub(stubs, numServer));
 		CompletableFuture<String> DMat = grpcMutliUtil.addAsync(DP1.get(), DP2.get(), getStub(stubs, numServer));
 		CompletableFuture.allOf(AMat, BMat, CMat, DMat);
+		System.out.println("Time here2 : " + (System.currentTimeMillis()- startTime));
 
 		A = MatrixUtils.decodeMatrix(AMat.get());
 		B = MatrixUtils.decodeMatrix(BMat.get());
@@ -123,7 +124,7 @@ public class GRPCClientService {
 		D = MatrixUtils.decodeMatrix(DMat.get());
 
 		int[][] res = calResult(A, B, C, D, MAX, bSize);
-		long stopTime = System.nanoTime();
+		long stopTime = System.currentTimeMillis();
 		System.out.println(stopTime - startTime);
 		shutdownChannels(channels);
 		return res;
@@ -131,7 +132,7 @@ public class GRPCClientService {
 
 	private int getNeededServerNum(String matA, String matB, MatrixServiceGrpc.MatrixServiceBlockingStub stub, int deadline) throws ExecutionException, InterruptedException {
 		long startTIme = System.currentTimeMillis();
-		stub.multiplyBlock(MatrixRequest.newBuilder().setA(matA).setB(matB).build()).getC();
+		String res = stub.multiplyBlock(MatrixRequest.newBuilder().setA(matA).setB(matB).build()).getC();
 		long endTime = System.currentTimeMillis();
 		long footprint= endTime-startTIme;
 		System.out.println("Footprint : "+footprint);
