@@ -21,7 +21,7 @@ public class MatrixController {
     public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam int deadline)
     {
         //Throws exception if file is empty
-        if(file == null)
+        if(file.isEmpty())
         {
             throw new RuntimeException("File is Empty");
         }
@@ -30,6 +30,12 @@ public class MatrixController {
         int[][][] matrices = MatrixUtils.getMatrixFromFile(file);
         int[][] matA = matrices[0];
         int[][] matB = matrices[1];
+
+        //If matrix is of size 2^0 return the result performing simple calculation
+        if(matA.length == 1 && matA[0].length == 1)
+        {
+            return MatrixUtils.encodeMatrix(new int[][]{{matA[0][0] * matB[0][0]}});
+        }
 
         //Perform block matrix multiplication
         int[][] res;

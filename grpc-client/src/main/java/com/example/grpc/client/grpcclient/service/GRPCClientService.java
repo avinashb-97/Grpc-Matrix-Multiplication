@@ -84,6 +84,7 @@ public class GRPCClientService {
 		long startTime = System.currentTimeMillis();
 
 		//Performing block multiplication asynchronously using needed number of servers
+		System.out.println("Starting matrix block multiplication...");
 		CompletableFuture<String> AP1 = grpcAsyncCalcService.multiplyAsync(aEncodedBlocks[0], bEncodedBlocks[0], getStub(stubs));
 		CompletableFuture<String> AP2 = grpcAsyncCalcService.multiplyAsync(aEncodedBlocks[1], bEncodedBlocks[2], getStub(stubs));
 		CompletableFuture<String> BP1 = grpcAsyncCalcService.multiplyAsync(aEncodedBlocks[0], bEncodedBlocks[1], getStub(stubs));
@@ -108,7 +109,8 @@ public class GRPCClientService {
 
 		//Noting the stop time to calculate the total time taken for matrix calculation
 		long stopTime = System.currentTimeMillis();
-		System.out.println("Total time taken for matrix multiplication : "+(stopTime - startTime)+" ms");
+		System.out.println("Matrix multiplication completed.");
+		System.out.println("Total time taken for matrix multiplication : "+(stopTime - startTime)+" ms \n");
 
 		//Shutdown all created channels
 		shutdownChannels(channels);
@@ -134,7 +136,7 @@ public class GRPCClientService {
 		String res = stub.multiplyBlock(MatrixRequest.newBuilder().setA(matA).setB(matB).build()).getC();
 		long endTime = System.currentTimeMillis();
 		long footprint = endTime - startTIme;
-		System.out.println("Footprint : " + footprint);
+		System.out.println("Footprint : " + footprint+" ms");
 
 		//Calculating the servers needed for entire matrix multiplication based on single block multiplication
 		int numberServer = (int) (footprint * 12) / deadline;
