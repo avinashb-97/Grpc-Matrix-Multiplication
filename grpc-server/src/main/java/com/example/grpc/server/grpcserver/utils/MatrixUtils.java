@@ -4,10 +4,12 @@ import java.util.Arrays;
 
 public class MatrixUtils {
 
+    //Encodes 2D matrix to string format
     public static String encodeMatrix(int[][] matrix) {
         return Arrays.deepToString(matrix);
     }
 
+    //Converts encoded matrix string to 2D matrix
     public static int[][] decodeMatrix(String matrix){
         return stringToDeep(matrix);
     }

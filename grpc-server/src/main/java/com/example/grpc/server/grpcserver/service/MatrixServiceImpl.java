@@ -11,27 +11,24 @@ import net.devh.boot.grpc.server.service.GrpcService;
 @GrpcService
 public class MatrixServiceImpl extends MatrixServiceGrpc.MatrixServiceImplBase
 {
-	private String name;
-
-	public MatrixServiceImpl(){
-
-	}
-
-	public MatrixServiceImpl(String name) {
-		this.name = name;
-	}
-
+	/**
+	 *	Performs addition of two matrix blocks
+	 */
 	@Override
 	public void addBlock(MatrixRequest request, StreamObserver<MatrixReply> reply)
 	{
+
+		//Decode the client request string to 2D matrix
 		int[][] matA = MatrixUtils.decodeMatrix(request.getA());
 		int[][] matB = MatrixUtils.decodeMatrix(request.getB());
+		System.out.println("Matrix addition request received from client:\n" + request);
+
+		//Create 2D matrix to store result
 		int row = matA.length;
 		int col = matA[0].length;
-
-		System.out.println("Matrix addition request received from client:\n" + request+" , Server: "+name);
 		int[][] matC = new int[row][col];
 
+		//Perform matrix addition for 2 matrices
 		for(int i=0; i<row; i++)
 		{
 			for(int j=0; j<col; j++)
@@ -40,23 +37,32 @@ public class MatrixServiceImpl extends MatrixServiceGrpc.MatrixServiceImplBase
 			}
 		}
 
+		//Encode the 2D matrix to string format
 		String res = MatrixUtils.encodeMatrix(matC);
+
+		//Return the encoded 2D matrix to client
 		MatrixReply response = MatrixReply.newBuilder().setC(res).build();
 		reply.onNext(response);
 		reply.onCompleted();
 	}
 
+	/**
+	 * Performs multiplication of two matrix blocks
+	 */
 	@Override
 	public void multiplyBlock(MatrixRequest request, StreamObserver<MatrixReply> reply)
 	{
+		//Decode the client request string to 2D matrix
 		int[][] matA = MatrixUtils.decodeMatrix(request.getA());
 		int[][] matB = MatrixUtils.decodeMatrix(request.getB());
+		System.out.println("Matrix multiplication request received from client:\n" + request);
+
+		//Create 2D matrix to store result
 		int row = matA.length;
 		int col = matA[0].length;
-
-		System.out.println("Matrix multiplication request received from client:\n" + request+" , Server: "+name);
 		int[][] matC = new int[row][col];
 
+		//Perform matrix multiplication for 2 matrices
 		for(int i=0; i<row; i++)
 		{
 			for(int j=0; j<col; j++)
@@ -69,7 +75,10 @@ public class MatrixServiceImpl extends MatrixServiceGrpc.MatrixServiceImplBase
 			}
 		}
 
+		//Encode the 2D matrix to string format
 		String res = MatrixUtils.encodeMatrix(matC);
+
+		//Return the encoded 2D matrix to client
         MatrixReply response = MatrixReply.newBuilder().setC(res).build();
         reply.onNext(response);
         reply.onCompleted();

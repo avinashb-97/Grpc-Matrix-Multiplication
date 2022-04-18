@@ -1,7 +1,15 @@
 package com.example.grpc.client.grpcclient.utils;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MatrixUtils {
 
@@ -79,7 +87,7 @@ public class MatrixUtils {
      * Converts array.toDeepString() back to 2D array
      * Source: https://stackoverflow.com/questions/22377447/java-multidimensional-array-to-string-and-string-to-array/22428926#22428926
      */
-    private static int[][] stringToDeep(String str) {
+    public static int[][] stringToDeep(String str) {
         int row = 0;
         int col = 0;
         for (int i = 0; i < str.length(); i++) {
@@ -124,4 +132,93 @@ public class MatrixUtils {
         return encodedMatrix;
     }
 
+    public static int[][][] splitToBlocks(int mat[][])
+    {
+        int MAX = mat.length;
+        int bSize = MAX/2;
+
+        int[][] A = new int[bSize][bSize];
+        int[][] B = new int[bSize][bSize];
+        int[][] C = new int[bSize][bSize];
+        int[][] D = new int[bSize][bSize];
+        int[][][] blocks = new int[4][bSize][bSize];
+
+        for (int i = 0; i < bSize; i++)
+        {
+            for (int j = 0; j < bSize; j++)
+            {
+                A[i][j] = mat[i][j];
+            }
+        }
+        for (int i = 0; i < bSize; i++)
+        {
+            for (int j = bSize; j < MAX; j++)
+            {
+                B[i][j-bSize] = mat[i][j];
+            }
+        }
+        for (int i = bSize; i < MAX; i++)
+        {
+            for (int j = 0; j < bSize; j++)
+            {
+                C[i-bSize][j] = mat[i][j];
+            }
+        }
+        for (int i = bSize; i < MAX; i++)
+        {
+            for (int j = bSize; j < MAX; j++)
+            {
+                D[i-bSize][j-bSize] = mat[i][j];
+            }
+        }
+        blocks[0] = A;
+        blocks[1] = B;
+        blocks[2] = C;
+        blocks[3] = D;
+        return blocks;
+    }
+
+    public static int[][] calResult(int[][] A, int[][] B, int[][] C, int[][] D, int MAX, int bSize)
+    {
+        int[][] res= new int[MAX][MAX];
+
+        for (int i = 0; i < bSize; i++){
+            for (int j = 0; j < bSize; j++){
+                res[i][j]=A[i][j];
+            }
+        }
+
+        for (int i = 0; i < bSize; i++){
+            for (int j = bSize; j < MAX; j++){
+                res[i][j]=B[i][j-bSize];
+            }
+        }
+
+        for (int i = bSize; i < MAX; i++){
+            for (int j = 0; j < bSize; j++){
+                res[i][j]=C[i-bSize][j];
+            }
+        }
+
+        for (int i = bSize; i < MAX; i++){
+            for (int j = bSize; j < MAX; j++){
+                res[i][j]=D[i-bSize][j-bSize];
+            }
+        }
+        return res;
+    }
+
+    public static int[][][] getMatrixFromFile(MultipartFile file) {
+        List<String> list = new ArrayList<>();
+        try {
+            InputStream inputStream = file.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            list = br.lines().collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int[][] matA = getMatrixA(list);
+        int[][] matB = getMatrixB(list);
+        return new int[][][]{matA, matB};
+    }
 }
