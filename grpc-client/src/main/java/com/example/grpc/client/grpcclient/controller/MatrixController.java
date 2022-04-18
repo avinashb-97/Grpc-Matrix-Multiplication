@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -52,7 +53,14 @@ public class MatrixController {
         int[][] matB = MatrixUtils.getMatrixB(list);
 
         System.out.println(deadline);
-        int[][] res = grpcClientService.multiply(matA, matB, deadline);
+        int[][] res = new int[0][];
+        try {
+            res = grpcClientService.multiply(matA, matB, deadline);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         MatrixUtils.printMatrix(res);
     }
 
