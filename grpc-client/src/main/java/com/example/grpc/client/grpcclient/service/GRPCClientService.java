@@ -37,7 +37,9 @@ public class GRPCClientService {
 		return helloResponse.getPong();
     }
 
-	//Performs matrix block multiplication using n number of servers based on given deadline
+	/**
+	 * Performs matrix block multiplication using n number of servers based on given deadline
+	 */
 	public int[][] multiply(int[][] matA, int[][] matB, int deadline) throws ExecutionException, InterruptedException {
 
 		// Create channels and respective stubs to establish connection to GRPC servers
@@ -113,14 +115,18 @@ public class GRPCClientService {
 		return res;
 	}
 
-	//Initializes the number of servers needed and initial stub number
+	/**
+	 * Initializes the number of servers needed and initial stub number
+	 */
 	private void initializeStubAndMaxServers(int numServer)
 	{
 		this.stubNum = 0;
 		this.numServer = numServer;
 	}
 
-	//Returns the number of server needed for performing matrix multiplication based on given deadline
+	/**
+	 * Returns the number of server needed for performing matrix multiplication based on given deadline
+	 */
 	private int getNeededServerNum(String matA, String matB, MatrixServiceGrpc.MatrixServiceBlockingStub stub, int deadline) throws ExecutionException, InterruptedException {
 
 		//Calculate time needed for single block matrix multiplication
@@ -138,7 +144,9 @@ public class GRPCClientService {
 		return numberServer < this.totalServers ? numberServer : this.totalServers;
 	}
 
-	//Returns the stub needed for operation
+	/**
+	 * Returns the stub needed for operation
+	 */
 	private MatrixServiceGrpc.MatrixServiceBlockingStub getStub(List<MatrixServiceGrpc.MatrixServiceBlockingStub> stubs)
 	{
 		if(stubNum == numServer)
@@ -148,7 +156,9 @@ public class GRPCClientService {
 		return stubs.get(stubNum++);
 	}
 
-	//Shutdowns all the running channels iteratively
+	/**
+	 * Shutdowns all the running channels iteratively
+	 */
 	private void shutdownChannels(List<ManagedChannel> channels)
 	{
 		for (ManagedChannel channel : channels)

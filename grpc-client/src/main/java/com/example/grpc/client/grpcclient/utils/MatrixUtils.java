@@ -15,7 +15,7 @@ public class MatrixUtils {
 
     /**
      * Checks whether given number is in power of 2
-     * Source: https://www.geeksforgeeks.org/program-to-find-whether-a-given-number-is-power-of-2/
+     * Reference: https://www.geeksforgeeks.org/program-to-find-whether-a-given-number-is-power-of-2/
      */
     private static boolean isPowerOfTwo(int n)
     {
@@ -23,7 +23,7 @@ public class MatrixUtils {
                 == (int)(Math.floor(((Math.log(n) / Math.log(2)))));
     }
 
-    public static int[][] getMatrixA(List<String> list) {
+    private static int[][] getMatrixA(List<String> list) {
         String[] size = list.get(0).split(" ");
         int row = Integer.parseInt(size[0]);
         int col = Integer.parseInt(size[1]);
@@ -31,7 +31,7 @@ public class MatrixUtils {
         return getMatrix(list, row, col, skip);
     }
 
-    public static int[][] getMatrixB(List<String> list) {
+    private static int[][] getMatrixB(List<String> list) {
         String[] sizeA = list.get(0).split(" ");
         int matArows = Integer.parseInt(sizeA[0]);
         int skip = matArows+4;
@@ -42,7 +42,9 @@ public class MatrixUtils {
         return getMatrix(list, row, col, skip);
     }
 
-    public static int[][] getMatrix(List<String> list, int row, int col, int skip) {
+    private static int[][] getMatrix(List<String> list, int row, int col, int skip) {
+
+        //Checks if the matrix is square matrix and the size is of power of 2
         if(row != col || !isPowerOfTwo(row))
         {
             throw new RuntimeException("Invalid matrix size");
@@ -85,7 +87,7 @@ public class MatrixUtils {
 
     /**
      * Converts array.toDeepString() back to 2D array
-     * Source: https://stackoverflow.com/questions/22377447/java-multidimensional-array-to-string-and-string-to-array/22428926#22428926
+     * Reference: https://stackoverflow.com/questions/22377447/java-multidimensional-array-to-string-and-string-to-array/22428926#22428926
      */
     public static int[][] stringToDeep(String str) {
         int row = 0;
@@ -132,6 +134,10 @@ public class MatrixUtils {
         return encodedMatrix;
     }
 
+    /**
+     * Splits the given matrix into blocks
+     * Reference: https://qmplus.qmul.ac.uk/pluginfile.php/2561581/mod_resource/content/0/BlockMult.java
+     */
     public static int[][][] splitToBlocks(int mat[][])
     {
         int MAX = mat.length;
@@ -178,6 +184,10 @@ public class MatrixUtils {
         return blocks;
     }
 
+    /**
+     * Converts the block matrices back into a single matrix
+     * Reference: https://qmplus.qmul.ac.uk/pluginfile.php/2561581/mod_resource/content/0/BlockMult.java
+     */
     public static int[][] calResult(int[][] A, int[][] B, int[][] C, int[][] D, int MAX, int bSize)
     {
         int[][] res= new int[MAX][MAX];
@@ -207,6 +217,7 @@ public class MatrixUtils {
         }
         return res;
     }
+
 
     public static int[][][] getMatrixFromFile(MultipartFile file) {
         List<String> list = new ArrayList<>();
