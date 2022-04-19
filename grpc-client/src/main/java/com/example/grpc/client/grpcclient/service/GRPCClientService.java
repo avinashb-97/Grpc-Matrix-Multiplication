@@ -47,7 +47,7 @@ public class GRPCClientService {
 
 		//Array of GRPC servers ip address
 		String[] grpcServerAddresses = new String[]{"35.238.96.183","35.184.111.129","35.223.152.1","34.66.143.88",
-				"35.184.54.220","34.132.132.87","34.71.156.76","35.234.156.7"};
+				"35.184.54.220","34.132.132.87","34.71.156.76","35.234.156.7","34.105.161.153","34.142.76.41"};
 
 		// Create channels and respective stubs to establish connection to given GRPC servers
 		createChannels(grpcServerAddresses, 8082);
@@ -112,7 +112,7 @@ public class GRPCClientService {
 		stubs = new ArrayList<>();
 		for(String address : ipAddresses)
 		{
-			ManagedChannel channel = ManagedChannelBuilder.forAddress("35.238.96.183",8082).usePlaintext().build();
+			ManagedChannel channel = ManagedChannelBuilder.forAddress(address,8082).usePlaintext().build();
 			MatrixServiceGrpc.MatrixServiceBlockingStub stub = MatrixServiceGrpc.newBlockingStub(channel);
 			channels.add(channel);
 			stubs.add(stub);
