@@ -16,7 +16,6 @@ public class GRPCAsyncCalcService {
     @Async("asyncExecutor")
     public CompletableFuture<String> multiplyAsync(String matA, String matB, MatrixServiceGrpc.MatrixServiceBlockingStub stub)
     {
-        System.out.println("Matrix multi");
         return CompletableFuture.completedFuture(stub.multiplyBlock(MatrixRequest.newBuilder().setA(matA).setB(matB).build()).getC());
     }
 
@@ -26,7 +25,6 @@ public class GRPCAsyncCalcService {
     @Async("asyncExecutor")
     public CompletableFuture<String> addAsync(String matA, String matB, MatrixServiceGrpc.MatrixServiceBlockingStub stub)
     {
-        System.out.println("Matrix add");
         return CompletableFuture.completedFuture(stub.addBlock(MatrixRequest.newBuilder().setA(matA).setB(matB).build()).getC());
     }
 
