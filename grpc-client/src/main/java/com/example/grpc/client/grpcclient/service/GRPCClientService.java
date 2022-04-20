@@ -112,7 +112,7 @@ public class GRPCClientService {
 		stubs = new ArrayList<>();
 		for(String address : ipAddresses)
 		{
-			ManagedChannel channel = ManagedChannelBuilder.forAddress(address,8082).usePlaintext().build();
+			ManagedChannel channel = ManagedChannelBuilder.forAddress(address,port).usePlaintext().build();
 			MatrixServiceGrpc.MatrixServiceBlockingStub stub = MatrixServiceGrpc.newBlockingStub(channel);
 			channels.add(channel);
 			stubs.add(stub);
